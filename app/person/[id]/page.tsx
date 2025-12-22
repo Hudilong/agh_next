@@ -34,10 +34,12 @@ type PersonCopy = {
   comments: string;
   relationships: {
     parents: string;
+    siblings: string;
     spouses: string;
     children: string;
     empty: string;
     noChildren: string;
+    noSiblings: string;
   };
 };
 
@@ -57,10 +59,12 @@ const PERSON_COPY: LocalizedCopy<PersonCopy> = {
     comments: "Commentaires",
     relationships: {
       parents: "Parents",
+      siblings: "Frères et sœurs",
       spouses: "Conjoint(e)s",
       children: "Enfants",
       empty: "Non renseigné",
       noChildren: "Aucun enfant trouvé",
+      noSiblings: "Aucun frère ou sœur trouvé",
     },
   },
   en: {
@@ -78,10 +82,12 @@ const PERSON_COPY: LocalizedCopy<PersonCopy> = {
     comments: "Comments",
     relationships: {
       parents: "Parents",
+      siblings: "Siblings",
       spouses: "Spouses",
       children: "Children",
       empty: "Not provided",
       noChildren: "No children found",
+      noSiblings: "No siblings found",
     },
   },
   es: {
@@ -99,10 +105,12 @@ const PERSON_COPY: LocalizedCopy<PersonCopy> = {
     comments: "Comentarios",
     relationships: {
       parents: "Padres",
+      siblings: "Hermanos",
       spouses: "Cónyuges",
       children: "Hijos",
       empty: "No indicado",
       noChildren: "No se encontraron hijos",
+      noSiblings: "No se encontraron hermanos",
     },
   },
   ht: {
@@ -120,10 +128,12 @@ const PERSON_COPY: LocalizedCopy<PersonCopy> = {
     comments: "Kòmantè",
     relationships: {
       parents: "Paran",
+      siblings: "Frè ak sè",
       spouses: "Konsò",
       children: "Timoun",
       empty: "Pa ranpli",
       noChildren: "Pa jwenn okenn timoun",
+      noSiblings: "Pa jwenn okenn frè oswa sè",
     },
   },
 };
@@ -155,7 +165,7 @@ export default async function PersonPage({
           username={user?.usager}
           pathname={`/person/${idNum}`}
         />
-        <main className="max-w-6xl mx-auto px-6 py-12 space-y-6">
+        <main className="page-shell py-12 space-y-6">
           <MemberGate
             lang={lang}
             preserved={preserved}
@@ -172,10 +182,10 @@ export default async function PersonPage({
   if (!person) notFound();
 
   const parentIds = [person.pere, person.mere].filter(
-    (v): v is number => v != null,
+    (v): v is number => v != null && v > 0,
   );
 
-  const [parents, children, marriages] = await Promise.all([
+  const [parents, children, marriages, siblings] = await Promise.all([
     parentIds.length > 0
       ? prisma.genea.findMany({
           where: { id: { in: parentIds } },
@@ -190,13 +200,23 @@ export default async function PersonPage({
       where: { OR: [{ pere: idNum }, { mere: idNum }] },
       take: 50,
     }),
+    parentIds.length > 0
+      ? prisma.genea.findMany({
+          where: {
+            id: { not: idNum },
+            OR: [{ pere: { in: parentIds } }, { mere: { in: parentIds } }],
+          },
+          orderBy: [{ date_naissance: "asc" }, { prenom: "asc" }],
+          take: 200,
+        })
+      : Promise.resolve([]),
   ]);
 
   const spouseIds = Array.from(
     new Set(
       marriages
         .map((m) => (m.pere === idNum ? m.mere : m.pere))
-        .filter((v): v is number => v != null),
+        .filter((v): v is number => v != null && v > 0),
     ),
   );
   const spouses =
@@ -209,6 +229,7 @@ export default async function PersonPage({
   const dateRange = `${person.date_naissance ?? "…"} – ${person.date_mort ?? "…"}`;
   const relationshipStats = [
     { label: copy.relationships.parents, value: parents.length },
+    { label: copy.relationships.siblings, value: siblings.length },
     { label: copy.relationships.spouses, value: spouses.length },
     { label: copy.relationships.children, value: children.length },
   ];
@@ -224,7 +245,7 @@ export default async function PersonPage({
         pathname={`/person/${idNum}`}
       />
 
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-8">
+      <main className="page-shell py-12 space-y-8 2xl:space-y-10">
         <PageHero
           eyebrow={copy.eyebrow}
           title={copy.heroTitle(fullName)}
@@ -257,7 +278,7 @@ export default async function PersonPage({
               <div className="text-base font-semibold text-haiti-navy">
                 {copy.identity}
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {relationshipStats.map((stat) => (
                   <div
                     key={stat.label}
@@ -274,8 +295,8 @@ export default async function PersonPage({
           }
         />
 
-        <section className="grid gap-6 md:grid-cols-[1.1fr_0.9fr]">
-          <div className="glass-panel rounded-2xl p-6 space-y-3">
+        <section className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
+          <div className="glass-panel rounded-2xl p-6 space-y-3 lg:col-span-2 2xl:col-span-3">
             <div className="text-sm uppercase tracking-[0.15em] text-haiti-ink/60">
               {copy.identity}
             </div>
@@ -305,26 +326,30 @@ export default async function PersonPage({
             )}
           </div>
 
-          <div className="space-y-4">
-            <RelationshipCard
-              title={copy.relationships.parents}
-              emptyLabel={copy.relationships.empty}
-              people={parents}
-              lang={lang}
-            />
-            <RelationshipCard
-              title={copy.relationships.spouses}
-              emptyLabel={copy.relationships.empty}
-              people={spouses}
-              lang={lang}
-            />
-            <RelationshipCard
-              title={copy.relationships.children}
-              emptyLabel={copy.relationships.noChildren}
-              people={children}
-              lang={lang}
-            />
-          </div>
+          <RelationshipCard
+            title={copy.relationships.parents}
+            emptyLabel={copy.relationships.empty}
+            people={parents}
+            lang={lang}
+          />
+          <RelationshipCard
+            title={copy.relationships.spouses}
+            emptyLabel={copy.relationships.empty}
+            people={spouses}
+            lang={lang}
+          />
+          <RelationshipCard
+            title={copy.relationships.siblings}
+            emptyLabel={copy.relationships.noSiblings}
+            people={siblings}
+            lang={lang}
+          />
+          <RelationshipCard
+            title={copy.relationships.children}
+            emptyLabel={copy.relationships.noChildren}
+            people={children}
+            lang={lang}
+          />
         </section>
       </main>
     </div>
