@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import typography from "@tailwindcss/typography";
 
 export default {
   content: [
@@ -11,8 +12,21 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        "haiti-navy": "rgb(var(--haiti-navy-rgb) / <alpha-value>)",
+        "haiti-ink": "rgb(var(--haiti-ink-rgb) / <alpha-value>)",
+        "haiti-sky": "rgb(var(--haiti-sky-rgb) / <alpha-value>)",
+        "haiti-coral": "rgb(var(--haiti-coral-rgb) / <alpha-value>)",
+        "haiti-foam": "rgb(var(--haiti-foam-rgb) / <alpha-value>)",
+        "haiti-sand": "rgb(var(--haiti-sand-rgb) / <alpha-value>)",
+      },
+      boxShadow: {
+        card: "0 18px 45px rgba(17, 34, 52, 0.07)",
+      },
+      backgroundImage: {
+        "haiti-gradient":
+          "linear-gradient(135deg, rgba(92,184,216,0.18), rgba(12,50,87,0.08))",
       },
     },
   },
-  plugins: [],
+  plugins: [typography],
 } satisfies Config;

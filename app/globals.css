@@ -3,19 +3,75 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --haiti-navy-rgb: 15 50 87;
+  --haiti-ink-rgb: 20 42 69;
+  --haiti-sky-rgb: 92 184 216;
+  --haiti-coral-rgb: 242 100 60;
+  --haiti-foam-rgb: 227 238 244;
+  --haiti-sand-rgb: 249 243 231;
+  --haiti-navy: rgb(var(--haiti-navy-rgb));
+  --haiti-ink: rgb(var(--haiti-ink-rgb));
+  --haiti-sky: rgb(var(--haiti-sky-rgb));
+  --haiti-coral: rgb(var(--haiti-coral-rgb));
+  --haiti-foam: rgb(var(--haiti-foam-rgb));
+  --haiti-sand: rgb(var(--haiti-sand-rgb));
+  --background: var(--haiti-sand);
+  --foreground: var(--haiti-ink);
+  --card-shadow: 0 18px 45px rgba(17, 34, 52, 0.07);
+  --outline: rgba(12, 51, 88, 0.14);
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(
+    circle at 20% 20%,
+    rgba(var(--haiti-sand-rgb), 0.95) 0,
+    rgba(var(--haiti-sand-rgb), 0.7) 35%,
+    rgba(var(--haiti-foam-rgb), 0.75) 75%,
+    rgba(var(--haiti-foam-rgb), 0.6) 100%
+  );
+  font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), "Georgia", serif;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 2rem + 1vw, 3.2rem);
+  line-height: 1.08;
+  font-weight: 800;
+}
+
+h2 {
+  font-size: clamp(1.6rem, 1.4rem + 0.6vw, 2.2rem);
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: clamp(1.35rem, 1.2rem + 0.4vw, 1.8rem);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--outline);
+  box-shadow: var(--card-shadow);
+}
+
+.pill {
+  border-radius: 9999px;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--outline);
+  background: rgba(236, 244, 249, 0.7);
+  color: var(--haiti-ink);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }

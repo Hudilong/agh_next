@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# legacy site
+/legacy
+
 # testing
 /coverage
 
