@@ -1,6 +1,12 @@
 import { render } from "@testing-library/react";
 
 let lastFlowProps: any = null;
+const mockFlowInstance = {
+  fitView: vi.fn(),
+  getNodes: vi.fn(() => lastFlowProps?.nodes ?? []),
+  setCenter: vi.fn(),
+  getZoom: vi.fn(() => 1),
+};
 
 vi.mock("@xyflow/react", () => ({
   Background: () => null,
@@ -14,6 +20,7 @@ vi.mock("@xyflow/react", () => ({
     lastFlowProps = props;
     return <div data-testid="flow" />;
   },
+  useReactFlow: () => mockFlowInstance,
 }));
 
 vi.mock("@dagrejs/dagre", () => ({
@@ -55,6 +62,10 @@ const graph = {
 describe("GenealogyFlow", () => {
   beforeEach(() => {
     lastFlowProps = null;
+    mockFlowInstance.fitView.mockClear();
+    mockFlowInstance.getNodes.mockClear();
+    mockFlowInstance.setCenter.mockClear();
+    mockFlowInstance.getZoom.mockClear();
   });
 
   test("renders nodes/edges with spouse dedupe and styles", async () => {

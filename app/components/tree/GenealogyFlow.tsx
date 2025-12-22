@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import dagre from '@dagrejs/dagre';
 import {
   Background,
@@ -12,6 +12,7 @@ import {
   Position,
   ReactFlow,
   ReactFlowProvider,
+  useReactFlow,
   type NodeProps,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -61,6 +62,10 @@ type FlowEdgeData = {
 
 const nodeWidth = 240;
 const nodeHeight = 120;
+const fitPadding = 0.22;
+const defaultFitZoom = 0.75;
+const minZoom = 0.15;
+const maxZoom = 1.6;
 
 export function GenealogyFlow({
   graph,
@@ -77,29 +82,7 @@ export function GenealogyFlow({
   return (
     <div className="h-full rounded-2xl border border-white/70 bg-white/70 backdrop-blur-md shadow-card overflow-hidden">
       <ReactFlowProvider>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          fitView
-          fitViewOptions={{ padding: 0.3 }}
-          defaultEdgeOptions={{ animated: false }}
-          nodeTypes={{ person: PersonCard }}
-          panOnScroll
-          zoomOnScroll
-          zoomOnPinch
-          elementsSelectable
-          proOptions={{ hideAttribution: true }}
-        >
-          <Background gap={16} size={1} color="rgba(15,50,87,0.07)" />
-          <MiniMap
-            nodeStrokeColor={(n) =>
-              (n.data as FlowNodeData).isFocus ? 'rgb(var(--haiti-coral-rgb))' : 'rgb(var(--haiti-navy-rgb))'
-            }
-            nodeColor={() => 'rgb(var(--haiti-foam-rgb))'}
-            maskColor="rgba(255,255,255,0.4)"
-          />
-          <Controls showFitView={false} />
-        </ReactFlow>
+        <FlowCanvas focusId={focusId} nodes={nodes} edges={edges} />
       </ReactFlowProvider>
     </div>
   );
@@ -243,6 +226,72 @@ function layout(
   }));
 
   return { nodes: rfNodes, edges: rfEdges };
+}
+
+function FlowCanvas({
+  nodes,
+  edges,
+  focusId,
+}: {
+  nodes: Node<FlowNodeData>[];
+  edges: Edge<FlowEdgeData>[];
+  focusId: string;
+}) {
+  const instance = useReactFlow();
+
+  useEffect(() => {
+    if (!nodes.length) return;
+    instance.fitView({ padding: fitPadding, maxZoom: defaultFitZoom, duration: 350 });
+  }, [nodes, instance]);
+
+  useEffect(() => {
+    if (!focusId) return;
+    const currentNodes = instance.getNodes();
+    const target = currentNodes.find((n) => n.id === focusId);
+    if (!target) return;
+    const width = target.width ?? nodeWidth;
+    const height = target.height ?? nodeHeight;
+    const x = target.position.x + width / 2;
+    const y = target.position.y + height / 2;
+    instance.setCenter(x, y, {
+      zoom: Math.min(instance.getZoom(), maxZoom),
+      duration: 350,
+    });
+  }, [focusId, instance, nodes]);
+
+  return (
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      minZoom={minZoom}
+      maxZoom={maxZoom}
+      fitView
+      fitViewOptions={{ padding: fitPadding, maxZoom: defaultFitZoom }}
+      defaultEdgeOptions={{ animated: false }}
+      nodeTypes={{ person: PersonCard }}
+      panOnScroll
+      zoomOnScroll
+      zoomOnPinch
+      elementsSelectable
+      proOptions={{ hideAttribution: true }}
+    >
+      <Background gap={16} size={1} color="rgba(15,50,87,0.07)" />
+      <MiniMap
+        pannable
+        zoomable
+        style={{ height: 140, width: 220, borderRadius: 12 }}
+        className="!bg-white/80 !shadow-md !border !border-white/80 !backdrop-blur"
+        nodeStrokeColor={(n) =>
+          (n.data as FlowNodeData).isFocus
+            ? 'rgb(var(--haiti-coral-rgb))'
+            : 'rgb(var(--haiti-navy-rgb))'
+        }
+        nodeColor={() => 'rgb(var(--haiti-foam-rgb))'}
+        maskColor="rgba(255,255,255,0.4)"
+      />
+      <Controls showFitView={false} position="bottom-left" />
+    </ReactFlow>
+  );
 }
 
 function PersonCard({ data }: NodeProps<FlowNodeData>) {

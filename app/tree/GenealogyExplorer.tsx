@@ -8,6 +8,7 @@ import {
 } from '@/app/components/tree/GenealogyFlow';
 import { StatusMessage } from '@/app/components/common/StatusMessage';
 import type { Locale } from '@/app/i18n';
+import { MobileControlsSheet } from '@/app/components/tree/MobileControlsSheet';
 
 export type TreeCopy = {
   quickSearch: string;
@@ -107,8 +108,26 @@ export function GenealogyExplorer({
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-6 lg:grid-cols-[320px,1fr]">
-        <aside className="glass-panel rounded-2xl p-5 space-y-5">
+      <MobileControlsSheet
+        lang={lang}
+        copy={copy}
+        query={query}
+        setQuery={setQuery}
+        availableLetters={availableLetters}
+        letterFilter={letterFilter}
+        setLetterFilter={setLetterFilter}
+        direction={direction}
+        setDirection={setDirection}
+        maxDepth={maxDepth}
+        setMaxDepth={setMaxDepth}
+        people={filtered}
+        focusId={focusId}
+        setFocusId={setFocusId}
+        loading={loading}
+      />
+
+      <div className="grid gap-6 lg:grid-cols-[320px,1fr] xl:grid-cols-[360px,1fr] 2xl:grid-cols-[400px,1fr]">
+        <aside className="glass-panel rounded-2xl p-5 space-y-5 hidden lg:block">
           <div className="space-y-2">
             <div className="text-sm font-semibold text-haiti-navy">
               {copy.quickSearch}
@@ -245,7 +264,7 @@ export function GenealogyExplorer({
             </div>
           </div>
 
-          <div className="h-[560px]">
+          <div className="h-[480px] sm:h-[560px] 2xl:h-[640px]">
             {error && (
               <StatusMessage tone="error">
                 {copy.errorPrefix} {error}

@@ -123,7 +123,7 @@ export default async function GenealogyPlaceholderPage({
         username={user?.usager}
         pathname="/tree"
       />
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
+      <main className="page-shell py-12 space-y-10 2xl:space-y-12">
         {canViewGenealogy ? (
           <>
             <PageHero
