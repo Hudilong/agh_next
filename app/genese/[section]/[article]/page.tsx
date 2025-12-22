@@ -55,7 +55,7 @@ export default async function ArticlePage({
         username={undefined}
         pathname={`/genese/${section.slug}/${article.slug}`}
       />
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
+      <main className="page-shell py-12 space-y-10 2xl:space-y-12">
         <PageHero
           eyebrow={`${breadcrumbRoot} · ${section.title}`}
           title={article.title}
@@ -106,7 +106,7 @@ export default async function ArticlePage({
           }
         />
 
-        <article className="prose prose-haiti max-w-none">
+        <article className="prose prose-haiti max-w-none lg:max-w-4xl 2xl:max-w-5xl mx-auto">
           {article.blocks.map((block) => (
             <BlockRenderer key={block.id} block={block} />
           ))}

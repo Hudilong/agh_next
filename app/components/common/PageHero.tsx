@@ -44,7 +44,7 @@ export function PageHero({
               alt={backgroundImage.alt}
               fill
               priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1152px"
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 92vw, (max-width: 1680px) 1200px, 1500px"
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-haiti-navy/80 via-haiti-navy/60 to-haiti-navy/35" />
@@ -61,7 +61,7 @@ export function PageHero({
       </div>
 
       <div
-        className={`relative grid gap-6 md:grid-cols-[1.05fr_0.95fr] p-8 md:p-12 ${textClass}`}
+        className={`relative grid gap-6 lg:grid-cols-[1.1fr_0.9fr] p-6 sm:p-8 md:p-10 lg:p-12 2xl:p-14 3xl:p-16 ${textClass}`}
       >
         <div className="space-y-3">
           {eyebrow && (
@@ -69,11 +69,11 @@ export function PageHero({
               {eyebrow}
             </p>
           )}
-          <h1 className="font-display text-4xl md:text-5xl leading-tight font-black drop-shadow">
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl leading-tight font-black drop-shadow max-w-4xl">
             {title}
           </h1>
           {description && (
-            <p className={`text-base md:text-lg max-w-2xl leading-relaxed ${descriptionClass}`}>
+            <p className={`text-base md:text-lg 2xl:text-xl max-w-2xl leading-relaxed ${descriptionClass}`}>
               {description}
             </p>
           )}
@@ -87,7 +87,7 @@ export function PageHero({
         </div>
 
         {aside && (
-          <div className="glass-panel rounded-2xl p-6 md:p-7 space-y-3 text-haiti-ink">
+          <div className="glass-panel rounded-2xl p-5 sm:p-6 md:p-7 space-y-3 text-haiti-ink">
             {aside}
           </div>
         )}

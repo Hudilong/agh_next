@@ -52,7 +52,7 @@ export default async function SectionPage({
         username={undefined}
         pathname={`/genese/${resolvedParams.section}`}
       />
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-8">
+      <main className="page-shell py-12 space-y-8 2xl:space-y-10">
         <PageHero
           eyebrow={copy.eyebrow}
           title={section.title}
@@ -65,50 +65,51 @@ export default async function SectionPage({
           }
         />
 
-        <section className="space-y-4">
-          {section.articles.map((article) => {
-            const snippet = article.blocks[0]?.content ?? "";
-            return (
-              <a
-                key={article.id}
-                href={buildPathWithParams({
-                  pathname: `/genese/${section.slug}/${article.slug}`,
-                  preserved,
-                  lang,
-                })}
-                className="block rounded-2xl border border-haiti-ink/10 bg-white p-6 shadow-card hover:-translate-y-[2px] transition"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <h2 className="text-xl font-semibold text-haiti-navy">
-                      {article.title}
-                    </h2>
-                    {article.author && (
-                      <p className="text-sm text-haiti-ink/60">
-                        {copy.byAuthor(article.author)}
-                      </p>
+        {section.articles.length === 0 ? (
+          <StatusMessage className="shadow-card">
+            {copy.noArticles}
+          </StatusMessage>
+        ) : (
+          <section className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3 2xl:gap-6">
+            {section.articles.map((article) => {
+              const snippet = article.blocks[0]?.content ?? "";
+              return (
+                <a
+                  key={article.id}
+                  href={buildPathWithParams({
+                    pathname: `/genese/${section.slug}/${article.slug}`,
+                    preserved,
+                    lang,
+                  })}
+                  className="block rounded-2xl border border-haiti-ink/10 bg-white p-6 shadow-card hover:-translate-y-[2px] transition"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <h2 className="text-xl font-semibold text-haiti-navy">
+                        {article.title}
+                      </h2>
+                      {article.author && (
+                        <p className="text-sm text-haiti-ink/60">
+                          {copy.byAuthor(article.author)}
+                        </p>
+                      )}
+                    </div>
+                    {article.publishedAt && (
+                      <span className="text-xs font-medium bg-haiti-coral/10 text-haiti-coral px-3 py-1 rounded-full shrink-0">
+                        {formatShortDate(article.publishedAt, lang)}
+                      </span>
                     )}
                   </div>
-                  {article.publishedAt && (
-                    <span className="text-xs font-medium bg-haiti-coral/10 text-haiti-coral px-3 py-1 rounded-full shrink-0">
-                      {formatShortDate(article.publishedAt, lang)}
-                    </span>
+                  {snippet && (
+                    <p className="mt-3 text-sm text-haiti-ink/70 line-clamp-3">
+                      {snippet}
+                    </p>
                   )}
-                </div>
-                {snippet && (
-                  <p className="mt-3 text-sm text-haiti-ink/70 line-clamp-3">
-                    {snippet}
-                  </p>
-                )}
-              </a>
-            );
-          })}
-          {section.articles.length === 0 && (
-            <StatusMessage className="shadow-card">
-              {copy.noArticles}
-            </StatusMessage>
-          )}
-        </section>
+                </a>
+              );
+            })}
+          </section>
+        )}
       </main>
     </div>
   );

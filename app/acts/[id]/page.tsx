@@ -42,7 +42,7 @@ export default async function ActDetailPage({
           username={user?.usager}
           pathname={`/acts/${resolvedParams.id}`}
         />
-        <main className="max-w-6xl mx-auto px-6 py-12 space-y-6">
+        <main className="page-shell py-12 space-y-6">
           <MemberGate
             lang={lang}
             preserved={preserved}
@@ -144,7 +144,7 @@ export default async function ActDetailPage({
         username={user?.usager}
         pathname={`/acts/${resolvedParams.id}`}
       />
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-8">
+      <main className="page-shell py-12 space-y-8 2xl:space-y-10">
         <PageHero
           eyebrow="AGH Archives"
           title={`${msg(lang, "actDetailTitle")} #${actId}`}

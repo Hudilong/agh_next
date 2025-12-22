@@ -29,12 +29,12 @@ export default async function LoginPage({
       <Navbar
         lang={lang}
         preserved={preserved}
-      msg={msg}
-      isMember={isMember(user)}
-      username={user?.usager}
-      pathname="/login"
-    />
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-8">
+        msg={msg}
+        isMember={isMember(user)}
+        username={user?.usager}
+        pathname="/login"
+      />
+      <main className="page-shell py-12 space-y-8 2xl:space-y-10">
         <PageHero
           eyebrow={msg(lang, "navLogin")}
           title={msg(lang, "loginTitle")}

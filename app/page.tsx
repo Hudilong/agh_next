@@ -53,7 +53,7 @@ export default async function HomePage({
         username={user?.usager}
         pathname="/"
       />
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-12">
+      <main className="page-shell py-12 space-y-12 2xl:space-y-14 3xl:space-y-16">
         <PageHero
           eyebrow="AGH"
           title={msg(lang, "homeHeroTitle")}
@@ -86,13 +86,13 @@ export default async function HomePage({
           }
         />
 
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 lg:gap-4 2xl:gap-5">
           {cards.map((c) => (
             <StatCard key={c.label} label={c.label} value={c.value} />
           ))}
         </section>
 
-        <section className="grid gap-4 md:grid-cols-3">
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:gap-6">
           <Card
             title={msg(lang, "navSearch")}
             body={msg(lang, "heroSubtitle")}

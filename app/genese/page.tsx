@@ -33,7 +33,7 @@ export default async function GenesePage({
         username={undefined}
         pathname="/genese"
       />
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-8">
+      <main className="page-shell py-12 space-y-8 2xl:space-y-10">
         <PageHero
           eyebrow={copy.eyebrow}
           title={msg(lang, "geneseHeroTitle")}
@@ -48,7 +48,7 @@ export default async function GenesePage({
           }
         />
 
-        <section className="grid gap-4 md:grid-cols-2">
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:gap-6">
           {sections.map((section) => (
             <a
               key={section.id}
