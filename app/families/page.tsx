@@ -5,9 +5,11 @@ import { Navbar } from "@/app/components/common/Navbar";
 import { StatusMessage } from "@/app/components/common/StatusMessage";
 import { Chip } from "@/app/components/common/Chip";
 import { PersonCard } from "@/app/components/common/PersonCard";
-import { msg, type Locale } from "@/app/i18n";
+import { msg } from "@/app/i18n";
 import { getCurrentUser, isMember } from "@/lib/auth";
 import { selectCopy, type LocalizedCopy } from "@/lib/copy";
+import { FamiliesFiltersSheet } from "@/app/components/families/FamiliesFiltersSheet";
+import { FamiliesDesktopFilters } from "@/app/components/families/FamiliesDesktopFilters";
 import {
   buildPathWithParams,
   buildPreservedForLink,
@@ -16,8 +18,6 @@ import {
   type SearchParamsInput,
 } from "@/lib/page-params";
 import { prisma } from "@/lib/prisma";
-
-const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 type FamiliesCopy = {
   eyebrow: string;
@@ -174,7 +174,7 @@ export default async function FamiliesRegisterPage({
       pathname="/families"
     />
 
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
+      <main className="page-shell py-12 space-y-10 2xl:space-y-12">
         <PageHero
           eyebrow={copy.eyebrow}
           title={msg(lang, "familiesHeroTitle")}
@@ -195,90 +195,38 @@ export default async function FamiliesRegisterPage({
           }
         />
 
-        <div className="grid gap-6 lg:grid-cols-[320px,1fr]">
-          <aside className="glass-panel rounded-2xl p-5 space-y-5">
-            <form className="space-y-3">
-              <div className="text-sm font-semibold text-haiti-navy">
-                {copy.searchLabel}
-              </div>
-              <input
-                name="q"
-                defaultValue={query}
-                placeholder={copy.searchPlaceholder}
-                className="w-full rounded-xl border border-white/60 bg-white/80 px-4 py-3 text-sm shadow-inner focus:border-haiti-coral focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="w-full px-4 py-2 rounded-xl bg-gradient-to-r from-haiti-coral to-haiti-sky text-white font-semibold shadow-card hover:translate-y-[1px] transition text-sm"
-              >
-                {copy.filterCta}
-              </button>
-            </form>
+        <div className="grid gap-6 2xl:gap-8 lg:grid-cols-[320px,1fr] 2xl:grid-cols-[360px,1fr] 3xl:grid-cols-[400px,1fr]">
+          <aside className="space-y-5">
+            <FamiliesFiltersSheet
+              lang={lang}
+              letter={letter}
+              query={query}
+              allLabel={copy.allLabel}
+              letterJumpLabel={copy.letterJump}
+              searchLabel={copy.searchLabel}
+              searchPlaceholder={copy.searchPlaceholder}
+              families={families}
+              selectedFamily={selectedFamily}
+              familiesLabel={copy.familiesLabel}
+              noFamilies={copy.noFamilies}
+            />
 
-              <div className="space-y-2">
-                <div className="text-sm font-semibold text-haiti-navy">
-                  {copy.letterJump}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <LetterChip
-                    lang={lang}
-                    letter="ALL"
-                    active={letter === "ALL"}
-                    allLabel={copy.allLabel}
-                    preserved={preserved}
-                  />
-                  {LETTERS.map((l) => (
-                    <LetterChip
-                      key={l}
-                      lang={lang}
-                      letter={l}
-                      active={letter === l}
-                      allLabel={copy.allLabel}
-                      preserved={preserved}
-                    />
-                  ))}
-                </div>
-              </div>
-
-            <div className="space-y-2">
-              <div className="text-sm font-semibold text-haiti-navy">
-                {copy.familiesLabel}
-              </div>
-              <div className="space-y-2 max-h-[340px] overflow-y-auto pr-1">
-                {families.map((fam) => (
-                  <Link
-                    key={fam.nom ?? ""}
-                    href={buildPathWithParams({
-                      pathname: "/families",
-                      preserved,
-                      lang,
-                      params: {
-                        letter,
-                        q: query,
-                        family: fam.nom ?? "",
-                      },
-                    })}
-                    className={`flex items-center justify-between rounded-xl border px-3 py-2 transition ${
-                      selectedFamily === fam.nom
-                        ? "border-haiti-coral bg-white shadow-sm"
-                        : "border-white/60 bg-white/70 hover:border-haiti-coral/60"
-                    }`}
-                  >
-                    <div className="text-sm font-semibold text-haiti-navy">
-                      {fam.nom}
-                    </div>
-                    <div className="text-xs text-haiti-ink/70 bg-white/70 rounded-full px-3 py-1 border border-white/60">
-                      {fam._count._all}
-                    </div>
-                  </Link>
-                ))}
-                {families.length === 0 && (
-                  <StatusMessage className="text-xs">
-                    {copy.noFamilies}
-                  </StatusMessage>
-                )}
-              </div>
-            </div>
+            <FamiliesDesktopFilters
+              lang={lang}
+              letter={letter}
+              query={query}
+              families={families}
+              selectedFamily={selectedFamily}
+              copy={{
+                searchLabel: copy.searchLabel,
+                searchPlaceholder: copy.searchPlaceholder,
+                filterCta: copy.filterCta,
+                letterJump: copy.letterJump,
+                allLabel: copy.allLabel,
+                familiesLabel: copy.familiesLabel,
+                noFamilies: copy.noFamilies,
+              }}
+            />
           </aside>
 
           <section className="space-y-4">
@@ -296,19 +244,27 @@ export default async function FamiliesRegisterPage({
                       {copy.peopleFound(people.length)}
                     </div>
                   </div>
-                  <Link
-                    href={buildPathWithParams({
+                  {(() => {
+                    const cleared = new URLSearchParams(preserved);
+                    cleared.delete("family");
+                    cleared.delete("filters");
+                    const href = buildPathWithParams({
                       pathname: "/families",
-                      preserved,
+                      preserved: cleared,
                       lang,
                       params: { letter, q: query },
-                    })}
+                    });
+                    return (
+                  <Link
+                        href={href}
                     className="text-sm px-4 py-2 rounded-full border border-haiti-ink/15 text-haiti-ink font-semibold bg-white/70 hover:border-haiti-ink/40 transition"
                   >
                     {copy.clearSelection}
                   </Link>
+                    );
+                  })()}
                 </div>
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3 2xl:gap-4">
                   {people.map((p) => (
                     <PersonCard
                       key={p.id}
@@ -335,31 +291,5 @@ export default async function FamiliesRegisterPage({
         </div>
       </main>
     </div>
-  );
-}
-
-function LetterChip({
-  lang,
-  letter,
-  active,
-  allLabel,
-  preserved,
-}: {
-  lang: Locale;
-  letter: string;
-  active: boolean;
-  allLabel: string;
-  preserved: URLSearchParams;
-}) {
-  const label =
-    letter === "ALL" ? allLabel : letter;
-  const href = buildPathWithParams({
-    pathname: "/families",
-    preserved,
-    lang,
-    params: { letter },
-  });
-  return (
-    <Chip href={href} label={label} active={active} />
   );
 }

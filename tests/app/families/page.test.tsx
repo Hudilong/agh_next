@@ -2,6 +2,9 @@ import { render, screen } from "@testing-library/react";
 
 const mockGetCurrentUser = vi.fn();
 const mockIsMember = vi.fn();
+const mockPush = vi.fn();
+const mockReplace = vi.fn();
+let currentSearchParams = new URLSearchParams();
 
 vi.mock("@/lib/auth", () => ({
   getCurrentUser: mockGetCurrentUser,
@@ -32,6 +35,11 @@ vi.mock("@/app/i18n", () => ({
   msg: (_lang: string, key: string) => key,
 }));
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: mockPush, replace: mockReplace, prefetch: vi.fn() }),
+  useSearchParams: () => currentSearchParams,
+}));
+
 const mockPrisma = {
   genea: {
     groupBy: vi.fn(),
@@ -48,6 +56,9 @@ describe("FamiliesRegisterPage", () => {
     vi.clearAllMocks();
     mockGetCurrentUser.mockResolvedValue(null);
     mockIsMember.mockReturnValue(false);
+    mockPush.mockReset();
+    mockReplace.mockReset();
+    currentSearchParams = new URLSearchParams();
   });
 
   test("renders letter chips and selected family with people list", async () => {
@@ -55,6 +66,7 @@ describe("FamiliesRegisterPage", () => {
       params: { letter: "A", q: "du", family: "Dupont" },
       preserved: new URLSearchParams({ lang: "en", letter: "A", q: "du" }),
     });
+    currentSearchParams = new URLSearchParams({ lang: "en", letter: "A", q: "du" });
     mockPrisma.genea.groupBy.mockResolvedValue([
       { nom: "Dupont", _count: { _all: 3 } },
       { nom: "Durand", _count: { _all: 1 } },
@@ -84,6 +96,7 @@ describe("FamiliesRegisterPage", () => {
       params: { letter: "ALL", q: "", family: "" },
       preserved: new URLSearchParams({ lang: "en", letter: "ALL" }),
     });
+    currentSearchParams = new URLSearchParams({ lang: "en", letter: "ALL" });
     mockPrisma.genea.groupBy.mockResolvedValue([]);
     mockPrisma.genea.findMany.mockResolvedValue([]);
     const page = (await import("@/app/families/page")).default;
