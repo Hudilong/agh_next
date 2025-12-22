@@ -1,0 +1,642 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+
+enum NewsBlockType {
+  PARAGRAPH
+  HEADING
+  QUOTE
+  LIST
+  TABLE
+  CODE
+  IMAGE
+  HTML
+}
+
+
+model NewsSection {
+  id         Int           @id @default(autoincrement())
+  title      String        @db.VarChar(200)
+  slug       String        @unique @db.VarChar(150)
+  sortOrder  Float?
+  createdAt  DateTime      @default(now()) @db.DateTime(0)
+  updatedAt  DateTime      @updatedAt @db.DateTime(0)
+
+  articles   NewsArticle[]
+
+  @@map("news_sections")
+}
+
+
+model NewsArticle {
+  id           Int           @id @default(autoincrement())
+  sectionId    Int
+  slug         String        @unique @db.VarChar(200)
+  title        String        @db.VarChar(255)
+  subtitle     String?       @db.VarChar(255)
+  excerpt      String?       @db.Text
+  author       String?       @db.VarChar(150)
+  status       ArticleStatus @default(DRAFT)
+  publishedAt  DateTime?     @db.DateTime(0)
+  isFeatured   Boolean       @default(false)
+  legacyId     Int?
+  createdAt    DateTime      @default(now()) @db.DateTime(0)
+  updatedAt    DateTime      @updatedAt @db.DateTime(0)
+
+  section      NewsSection   @relation(fields: [sectionId], references: [id])
+  blocks       NewsBlock[]
+
+  @@index([sectionId])
+  @@map("news_articles")
+}
+
+
+model NewsBlock {
+  id        Int            @id @default(autoincrement())
+  articleId Int
+  position  Int            @default(0)
+  type      NewsBlockType
+  content   String?        @db.Text
+  meta      Json?
+  createdAt DateTime       @default(now()) @db.DateTime(0)
+
+  article   NewsArticle    @relation(fields: [articleId], references: [id])
+
+  @@index([articleId, position])
+  @@map("news_blocks")
+}
+
+
+model actes {
+  communeevenement Int?
+  saisi            Int?
+  numeroacte       Int?
+  dateacte         DateTime? @db.DateTime(0)
+  pageacte         Int?
+  typeacte         String?   @db.VarChar(1)
+  dateevenement    String?   @db.VarChar(10)
+  notes            String?   @db.Text
+  releve           Int?
+  officier         Int?
+  communeacte      Int?
+  id               Int      @id
+  source           Int?
+
+  @@index([communeacte], map: "actes_communeacte")
+  @@index([dateacte], map: "actes_dateacte")
+  @@index([id], map: "actes_id")
+  @@index([typeacte], map: "actes_typeacte")
+  
+}
+
+
+model alignement {
+  id  Int    @id
+  nom String? @db.VarChar(10)
+
+  
+}
+
+
+model binaire {
+  id  Int    @id
+  nom String? @db.VarChar(10)
+
+  
+}
+
+
+model communes {
+  id       Int    @id
+  commune  String? @db.VarChar(50)
+  codepays String? @db.VarChar(3)
+
+  @@index([codepays], map: "communes_codepays")
+  @@index([commune], map: "communes_commune")
+  @@index([id], map: "communes_id")
+  
+}
+
+
+model count {
+  procedures Int?
+  id         Int @id
+  rois       Int?
+  rois2      Int?
+  actes      Int?
+  genea2     Int?
+  genea      Int?
+  personnes  Int?
+
+  
+}
+
+
+model dateajout {
+  fin   Int?
+  id    Int      @id
+  date  DateTime? @db.DateTime(0)
+  tag1  String?   @db.VarChar(30)
+  tag2  String?   @db.VarChar(30)
+  debut Int?
+
+  
+}
+
+
+model diapos {
+  id    Int    @id
+  diapo String? @db.VarChar(100)
+
+  
+}
+
+
+model emailcategs {
+  id        Int    @id
+  categorie String? @db.VarChar(100)
+
+  
+}
+
+
+model emails {
+  dst       String?   @db.Text
+  src       String?   @db.Text
+  id        Int      @id
+  msg       String?   @db.Text
+  categorie Int?
+  date      DateTime? @db.DateTime(0)
+  sujet     String?   @db.Text
+
+  
+}
+
+
+model famille {
+  lieu_naissance String? @db.Text
+  commentaires   String? @db.Text
+  parents        Int?
+  refno          String? @db.VarChar(10)
+  fampos         Int?
+  occupation     String? @db.VarChar(50)
+  mere           Int?
+  sexe           String? @db.VarChar(1)
+  source         String? @db.Text
+  lettre         String? @db.VarChar(1)
+  id             Int    @id
+  surnom         String? @db.VarChar(50)
+  srcrefno       String? @db.VarChar(10)
+  date_mort      String? @db.VarChar(20)
+  prenom         String? @db.VarChar(50)
+  lieu_mort      String? @db.Text
+  nom            String? @db.VarChar(50)
+  mariages       String? @db.Text
+  pere           Int?
+  photo          String? @db.VarChar(100)
+  date_naissance String? @db.VarChar(20)
+
+  
+}
+
+
+model famille2 {
+  date_mariage String? @db.VarChar(20)
+  id           Int    @id
+  refno        String? @db.VarChar(10)
+  lieu_mariage String? @db.Text
+  pere         Int?
+  mere         Int?
+
+  
+}
+
+
+model gen_articles {
+  nouveaute     Int?
+  usager        Int?
+  afficher      Int?
+  titre         String?   @db.Text
+  email         Int?
+  auteur        String?   @db.VarChar(100)
+  premiere_page Int?
+  reference     String?   @db.Text
+  date          DateTime? @db.DateTime(0)
+  rubrique      Int?
+  ordre         Float?
+  id            Int      @id
+
+  
+}
+
+
+model gen_rubriques {
+  id    Int    @id
+  nom   String? @db.VarChar(100)
+  ordre Float?
+
+  
+}
+
+
+model gen_texte {
+  texte            String? @db.Text
+  id               Int    @id
+  image            String? @db.VarChar(100)
+  article          Int?
+  sous_titre       String? @db.VarChar(150)
+  ordre            Float?
+  alignement_image Int?
+
+  
+}
+
+
+model genea {
+  lieu_naissance String? @db.Text
+  commentaires   String? @db.Text
+  parents        Int?
+  refno          String? @db.VarChar(10)
+  fampos         Int?
+  occupation     String? @db.VarChar(50)
+  mere           Int?
+  sexe           String? @db.VarChar(1)
+  source         String? @db.Text
+  lettre         String? @db.VarChar(1)
+  id             Int    @id
+  surnom         String? @db.VarChar(50)
+  srcrefno       String? @db.VarChar(10)
+  date_mort      String? @db.VarChar(20)
+  prenom         String? @db.VarChar(50)
+  lieu_mort      String? @db.Text
+  nom            String? @db.VarChar(50)
+  mariages       String? @db.Text
+  pere           Int?
+  photo          String? @db.VarChar(100)
+  date_naissance String? @db.VarChar(20)
+
+  @@index([id], map: "genea_id")
+  @@index([lettre], map: "genea_lettre")
+  @@index([mere], map: "genea_mere")
+  @@index([nom], map: "genea_nom")
+  @@index([parents], map: "genea_parents")
+  @@index([pere], map: "genea_pere")
+  @@index([refno], map: "genea_refno")
+  
+}
+
+
+model genea2 {
+  date_mariage String? @db.VarChar(20)
+  id           Int    @id
+  refno        String? @db.VarChar(10)
+  lieu_mariage String? @db.Text
+  pere         Int?
+  mere         Int?
+
+  @@index([mere], map: "genea2_mere")
+  @@index([pere], map: "genea2_pere")
+  
+}
+
+
+model history {
+  id        Int      @id
+  courriels Int?
+  sujet     String?   @db.VarChar(255)
+  date      DateTime? @db.DateTime(0)
+
+  @@index([date], map: "history_date")
+  @@index([id], map: "history_id")
+  
+}
+
+
+model indexlist {
+  id   Int    @id
+  tab  String? @db.VarChar(25)
+  flds String? @db.VarChar(200)
+
+  
+}
+
+
+model langpref {
+  id   Int      @id
+  lang String?   @db.VarChar(3)
+  ip   String?   @db.VarChar(20)
+  date DateTime? @db.DateTime(0)
+
+  
+}
+
+
+model links {
+  id     Int    @id
+  menu   Int?
+  dsttab String? @db.VarChar(50)
+  dstfld String? @db.VarChar(50)
+  srctab String? @db.VarChar(50)
+  srcfld String? @db.VarChar(50)
+  idfld  String? @db.VarChar(50)
+
+  
+}
+
+
+model manquants {
+  id          Int    @id
+  commentaire String? @db.Text
+  typeacte    String? @db.VarChar(1)
+  commune     Int?
+  annee       Int?
+
+  
+}
+
+
+model membres {
+  id   Int    @id
+  type String? @db.VarChar(50)
+
+  
+}
+
+
+model menus {
+  id   Int    @id
+  nom  String? @db.Text
+  code String? @db.Text
+
+  
+}
+
+
+model message {
+  id       Int    @id
+  texte_en String? @db.Text
+  fond     String? @db.VarChar(10)
+  texte_fr String? @db.Text
+  couleur  String? @db.VarChar(10)
+
+  
+}
+
+
+model metiers {
+  id     Int    @id
+  metier String? @db.VarChar(30)
+
+}
+
+
+model misajour {
+  id       Int    @id
+  commune  String? @db.VarChar(30)
+  codepays String? @db.VarChar(3)
+
+  
+}
+
+
+model officiers {
+  id        Int    @id
+  nomprenom String? @db.VarChar(50)
+}
+
+
+model pays {
+  codepays     String  @id @db.VarChar(3)
+  id           Int?
+  paysanglais  String? @db.VarChar(30)
+  paysfrancais String? @db.VarChar(30)
+
+  @@index([codepays], map: "pays_codepays")
+  @@index([id], map: "pays_id")
+  @@index([paysanglais], map: "pays_paysanglais")
+  @@index([paysfrancais], map: "pays_paysfrancais")
+}
+
+
+model paysusers {
+  codepays     String  @id @db.VarChar(3)
+  id           Int?
+  paysanglais  String? @db.VarChar(30)
+  paysfrancais String? @db.VarChar(30)
+
+}
+
+
+model personnes {
+  age             String? @db.VarChar(3)
+  datedenaissance String? @db.VarChar(10)
+  prenom          String? @db.VarChar(40)
+  notes           String? @db.Text
+  acte            Int?
+  role            Int?
+  profession      Int?
+  id              Int    @id
+  lieudenaissance Int?
+  nomdefamille    String? @db.VarChar(25)
+
+  @@index([acte], map: "personnes_acte")
+  @@index([id], map: "personnes_id")
+  @@index([lieudenaissance], map: "personnes_lieudenaissance")
+  @@index([nomdefamille], map: "personnes_nomdefamille")
+  @@index([prenom], map: "personnes_prenom")
+  @@index([role], map: "personnes_role")
+}
+
+
+model procedures {
+  id          Int    @id
+  description String? @db.VarChar(250)
+  func        String? @db.VarChar(20)
+
+}
+
+
+model recrutement {
+  id      Int      @id
+  name    String?   @db.VarChar(255)
+  email   String?   @db.VarChar(255)
+  source  String?   @db.VarChar(255)
+  added   DateTime? @db.DateTime(0)
+  removed DateTime? @db.DateTime(0)
+
+  @@index([email], map: "recrutement_email")
+  @@index([id], map: "recrutement_id")
+  @@index([name], map: "recrutement_name")
+  @@index([removed], map: "recrutement_removed")
+}
+
+
+model rois {
+  lieu_naissance String? @db.Text
+  commentaires   String? @db.Text
+  parents        Int?
+  refno          String? @db.VarChar(10)
+  fampos         Int?
+  occupation     String? @db.VarChar(50)
+  mere           Int?
+  sexe           String? @db.VarChar(1)
+  source         String? @db.Text
+  lettre         String? @db.VarChar(1)
+  id             Int    @id
+  surnom         String? @db.VarChar(50)
+  date_mort      String? @db.VarChar(20)
+  prenom         String? @db.VarChar(50)
+  lieu_mort      String? @db.Text
+  nom            String? @db.VarChar(50)
+  mariages       String? @db.Text
+  pere           Int?
+  photo          String? @db.VarChar(100)
+  date_naissance String? @db.VarChar(20)
+
+  @@index([id], map: "rois_id")
+  @@index([lettre], map: "rois_lettre")
+  @@index([mere], map: "rois_mere")
+  @@index([nom], map: "rois_nom")
+  @@index([parents], map: "rois_parents")
+  @@index([pere], map: "rois_pere")
+  @@index([refno], map: "rois_refno")
+}
+
+
+model rois2 {
+  date_mariage String? @db.VarChar(20)
+  id           Int    @id
+  refno        String? @db.VarChar(10)
+  lieu_mariage String? @db.Text
+  pere         Int?
+  mere         Int?
+
+  @@index([mere], map: "rois2_mere")
+  @@index([pere], map: "rois2_pere")
+}
+
+
+model role {
+  id   Int    @id
+  role String? @db.VarChar(20)
+
+}
+
+
+model saisipar {
+  id        Int    @id
+  nomprenom String? @db.VarChar(25)
+
+}
+
+
+model serveurs_sql {
+  id         Int    @id
+  protocole  String? @db.VarChar(10)
+  parametres String? @db.VarChar(200)
+  nom        String? @db.VarChar(100)
+
+}
+
+
+model serveurs_web {
+  id    Int    @id
+  java  Int?
+  nom   String? @db.VarChar(100)
+  admin String? @db.VarChar(100)
+
+}
+
+
+model sites {
+  ftp_root       String? @db.VarChar(20)
+  smtp_port      Int?
+  ftp_motpasse   String? @db.VarChar(20)
+  sql_usager     String? @db.VarChar(20)
+  sql_port       Int?
+  fournisseur    String? @db.VarChar(100)
+  sql_ip         String? @db.VarChar(100)
+  sql_database   String? @db.VarChar(50)
+  sql_type       Int?
+  ftp_ip         String? @db.VarChar(100)
+  id             Int    @id
+  http_admin     String? @db.VarChar(100)
+  ftp_usager     String? @db.VarChar(20)
+  systeme        Int?
+  http_type      Int?
+  sql_motpasse   String? @db.VarChar(20)
+  http_ip        String? @db.VarChar(100)
+  smtp_ip        String? @db.VarChar(100)
+  sql_parameters String? @db.VarChar(200)
+
+}
+
+
+model sources {
+  id    Int    @id
+  liste String? @db.VarChar(100)
+
+}
+
+
+model systemes {
+  id  Int    @id
+  nom String? @db.VarChar(20)
+
+}
+
+
+model typeacte {
+  code String  @id @db.VarChar(1)
+  nom  String? @db.VarChar(18)
+  id   Int?
+
+}
+
+
+model users {
+  membership      Int?
+  adresse         String?   @db.Text
+  telephone       String?   @db.VarChar(50)
+  expiration      DateTime? @db.DateTime(0)
+  pagination      Int?
+  donnees         String?   @db.VarChar(20)
+  usager          String?   @db.VarChar(20)
+  email           String?   @db.VarChar(50)
+  id              Int      @id
+  prenom          String?   @db.VarChar(30)
+  admin           Int?
+  codepays        String?   @db.VarChar(3)
+  compagnie       String?   @db.VarChar(100)
+  permissions     String?   @db.Text
+  visites         String?   @db.VarChar(20)
+  nom             String?   @db.VarChar(30)
+  historique      String?   @db.Text
+  paypal          Int?
+  note_expiration String?   @db.Text
+  url             String?   @db.VarChar(50)
+  motpasse        String?   @db.VarChar(20)
+  indexation      String?   @db.VarChar(20)
+  email_public    String?   @db.VarChar(100)
+  pays            Int?
+  menu            String?   @db.Text
+  conseil         Int?
+
+  @@index([admin], map: "users_admin")
+  @@index([email], map: "users_email")
+  @@index([id], map: "users_id")
+  @@index([membership], map: "users_membership")
+}
