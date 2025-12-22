@@ -32,7 +32,7 @@ export function ResultsSection({
 
   return (
     <section className="glass-panel rounded-2xl p-7 space-y-5">
-      <div className="flex items-baseline justify-between gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
         <div>
           <h2 className="text-xl font-semibold text-haiti-navy">
             {msg(lang, "resultsCount")}{" "}

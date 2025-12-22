@@ -1,5 +1,5 @@
 import { HeroSection } from "@/app/components/archives/HeroSection";
-import { FiltersForm } from "@/app/components/archives/FiltersForm";
+import { FiltersSheet } from "@/app/components/archives/FiltersSheet";
 import { ResultsSection } from "@/app/components/archives/ResultsSection";
 import { Navbar } from "@/app/components/common/Navbar";
 import { msg } from "@/app/i18n";
@@ -44,20 +44,24 @@ export default async function ArchivesPage({
         username={user?.usager}
         pathname="/archives"
       />
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
+      <main className="page-shell py-12 space-y-10 2xl:space-y-12">
         <HeroSection lang={lang} msg={msg} />
-        <FiltersForm lang={lang} params={params} lookups={lookups} msg={msg} />
-        <ResultsSection
-          lang={lang}
-          params={params}
-          results={results}
-          preserved={preserved}
-          msg={msg}
-          typeLabels={typeLabels}
-          roleLabels={roleLabels}
-          communeLabels={communeLabels}
-          canViewDetails={canViewArchives}
-        />
+        <div className="grid gap-6 lg:grid-cols-[360px,1fr] 2xl:grid-cols-[400px,1fr] items-start">
+          <div className="space-y-4 lg:sticky lg:top-24">
+            <FiltersSheet lang={lang} params={params} lookups={lookups} />
+          </div>
+          <ResultsSection
+            lang={lang}
+            params={params}
+            results={results}
+            preserved={preserved}
+            msg={msg}
+            typeLabels={typeLabels}
+            roleLabels={roleLabels}
+            communeLabels={communeLabels}
+            canViewDetails={canViewArchives}
+          />
+        </div>
       </main>
     </div>
   );

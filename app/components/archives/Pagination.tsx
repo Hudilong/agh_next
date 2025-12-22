@@ -29,11 +29,11 @@ export function Pagination({
     });
 
   return (
-    <div className="flex items-center justify-between pt-4 text-sm text-haiti-ink/80">
-      <span>
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-4 text-sm text-haiti-ink/80">
+      <span className="order-2 sm:order-1">
         {msg(lang, "pageLabel")} {page} {msg(lang, "ofLabel")} {totalPages}
       </span>
-      <div className="flex gap-2">
+      <div className="flex gap-2 order-1 sm:order-2">
         <a
           href={prev ? buildHref(prev) : "#"}
           aria-disabled={!prev}

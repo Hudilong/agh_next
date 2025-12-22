@@ -1,4 +1,6 @@
-import type { Locale, MsgFn } from "@/app/i18n";
+"use client";
+
+import { msg, type Locale } from "@/app/i18n";
 import { buildPreservedForLink } from "@/lib/page-params";
 import { toStr, type Lookups, type SearchParams } from "@/lib/search";
 
@@ -6,19 +8,17 @@ export function FiltersForm({
   lang,
   params,
   lookups,
-  msg,
 }: {
   lang: Locale;
   params: SearchParams;
   lookups: Lookups;
-  msg: MsgFn;
 }) {
   const sort = toStr(params.sort) || "name_asc";
   return (
     <form
       id="filters"
       method="get"
-      className="grid gap-4 md:grid-cols-3 bg-white/85 p-7 rounded-2xl shadow-card border border-white/70 backdrop-blur"
+      className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 bg-white/85 p-6 md:p-7 2xl:p-8 rounded-2xl shadow-card border border-white/70 backdrop-blur"
     >
       <input type="hidden" name="lang" value={lang} />
       <label className="flex flex-col gap-1 text-sm">
@@ -99,7 +99,7 @@ export function FiltersForm({
           inputMode="numeric"
         />
       </label>
-      <label className="flex flex-col gap-1 text-sm md:col-span-3">
+      <label className="flex flex-col gap-1 text-sm md:col-span-3 lg:col-span-1">
         <span className="font-semibold text-haiti-ink/80">
           {msg(lang, "notes")}
         </span>
@@ -178,7 +178,7 @@ export function FiltersForm({
           ))}
         </select>
       </label>
-      <div className="md:col-span-3 flex gap-3">
+      <div className="md:col-span-3 lg:col-span-1 flex gap-3">
         <button
           type="submit"
           className="bg-gradient-to-r from-haiti-coral to-haiti-sky text-white px-5 py-3 rounded-full font-semibold shadow-lg shadow-haiti-coral/30 hover:translate-y-[1px] transition"

@@ -45,6 +45,54 @@ export function ResultCard({
       })
     : null;
 
+  const detailSection = (
+    <>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 text-sm text-haiti-ink/90">
+        <div>
+          <span className="font-semibold text-haiti-ink">{msg(lang, "age")}:</span>{" "}
+          {row.age ?? "n/d"}
+        </div>
+        <div>
+          <span className="font-semibold text-haiti-ink">{msg(lang, "birth")}:</span>{" "}
+          {row.datedenaissance ?? "n/d"}
+          {birthCommune ? ` — ${birthCommune}` : ""}
+        </div>
+        {roleLabel && (
+          <div>
+            <span className="font-semibold text-haiti-ink">
+              {msg(lang, "role")}:
+            </span>{" "}
+            {roleLabel}
+          </div>
+        )}
+        {actCommune && (
+          <div>
+            <span className="font-semibold text-haiti-ink">
+              {msg(lang, "communeAct")}:
+            </span>{" "}
+            {actCommune}
+          </div>
+        )}
+      </div>
+      {row.notes && (
+        <div className="mt-2 text-sm text-haiti-ink/85">
+          <span className="font-semibold text-haiti-ink">
+            {msg(lang, "personNotes")}:
+          </span>{" "}
+          {row.notes}
+        </div>
+      )}
+      {row.actenotes && (
+        <div className="text-sm text-haiti-ink/85">
+          <span className="font-semibold text-haiti-ink">
+            {msg(lang, "actNotes")}:
+          </span>{" "}
+          {row.actenotes}
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div className="rounded-2xl border border-white/70 bg-white/85 p-5 shadow-card">
       <div className="flex flex-wrap items-center gap-2">
@@ -55,15 +103,15 @@ export function ResultCard({
         {detailHref && canViewDetails ? (
           <a
             href={detailHref}
-            className="ml-auto inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-haiti-coral to-haiti-sky text-white text-xs px-4 py-2 font-semibold shadow-lg shadow-haiti-coral/30 hover:translate-y-[1px] transition"
+            className="md:ml-auto inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-haiti-coral to-haiti-sky text-white text-xs px-4 py-2 font-semibold shadow-lg shadow-haiti-coral/30 hover:translate-y-[1px] transition"
           >
             {actLabel}
             <span className="opacity-80">
               #{row.acteid ?? "?"} {formatShortDate(row.dateacte, lang)}
-            </span>
-          </a>
-        ) : (
-          <span className="ml-auto inline-flex items-center gap-2 rounded-full bg-haiti-foam text-haiti-ink text-xs px-4 py-2 font-semibold">
+              </span>
+            </a>
+          ) : (
+          <span className="md:ml-auto inline-flex items-center gap-2 rounded-full bg-haiti-foam text-haiti-ink text-xs px-4 py-2 font-semibold">
             {actLabel}
             <span className="opacity-80">
               #{row.acteid ?? "?"} {formatShortDate(row.dateacte, lang)}
@@ -73,49 +121,19 @@ export function ResultCard({
       </div>
       {canViewDetails ? (
         <>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2 text-sm text-haiti-ink/90">
-            <div>
-              <span className="font-semibold text-haiti-ink">{msg(lang, "age")}:</span>{" "}
-              {row.age ?? "n/d"}
-            </div>
-            <div>
-              <span className="font-semibold text-haiti-ink">{msg(lang, "birth")}:</span>{" "}
-              {row.datedenaissance ?? "n/d"}
-              {birthCommune ? ` — ${birthCommune}` : ""}
-            </div>
-            {roleLabel && (
-              <div>
-                <span className="font-semibold text-haiti-ink">
-                  {msg(lang, "role")}:
-                </span>{" "}
-                {roleLabel}
-              </div>
-            )}
-            {actCommune && (
-              <div>
-                <span className="font-semibold text-haiti-ink">
-                  {msg(lang, "communeAct")}:
-                </span>{" "}
-                {actCommune}
-              </div>
-            )}
+          <div className="hidden sm:block">
+            {detailSection}
           </div>
-          {row.notes && (
-            <div className="mt-2 text-sm text-haiti-ink/85">
-              <span className="font-semibold text-haiti-ink">
-                {msg(lang, "personNotes")}:
-              </span>{" "}
-              {row.notes}
+          <details className="sm:hidden mt-3 group rounded-xl border border-haiti-ink/10 bg-haiti-foam/40 px-3 py-2">
+            <summary className="flex items-center justify-between text-sm font-semibold text-haiti-navy cursor-pointer select-none">
+              <span className="group-open:hidden">{msg(lang, "viewDetails")}</span>
+              <span className="hidden group-open:inline">{msg(lang, "hideDetails")}</span>
+              <span className="text-xs text-haiti-ink/60">▾</span>
+            </summary>
+            <div className="pt-2 text-sm text-haiti-ink/90 space-y-2">
+              {detailSection}
             </div>
-          )}
-          {row.actenotes && (
-            <div className="text-sm text-haiti-ink/85">
-              <span className="font-semibold text-haiti-ink">
-                {msg(lang, "actNotes")}:
-              </span>{" "}
-              {row.actenotes}
-            </div>
-          )}
+          </details>
         </>
       ) : (
         <div className="mt-3 text-sm text-haiti-ink/70">
